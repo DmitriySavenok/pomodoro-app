@@ -306,10 +306,12 @@ stopBtn.addEventListener('click', () => {
 
 setCyclesBtn.addEventListener('click', () => {
   let necessaryCyclesInput = document.getElementById('necessary-cycles-input').value;
-  if(necessaryCyclesInput >= 1 && necessaryCyclesInput <= 100) {
-    necessaryCycles = necessaryCyclesInput;
-  } else {
-    alert('Значение может быть от 1 до 100')
+  if (necessaryCyclesInput >= pomodoroCount) {
+    if(necessaryCyclesInput >= 1 && necessaryCyclesInput <= 100) {
+      necessaryCycles = necessaryCyclesInput;
+    } else {
+      alert('Значение может быть от 1 до 100')
+    }
   }
   updateCountSpan();
 });
