@@ -71,7 +71,6 @@ function clearInputs () {
 
 function craeteTask(name, cycle) {
   document.getElementById('taskList').innerHTML += `<li class="tasks__list-item task" data-pomodoro-cycle="${cycle.toString()}" id="task-${tasksCount.toString()}"><input id="check-done-${tasksCount.toString()}" type="checkbox" class="task__checkbox-done"><label for="check-done-${tasksCount.toString()}">${name.toString()}</label><span class="task__cycle">${cycle.toString()} / ${necessaryCycles.toString()}</span><button id="deleteTask${tasksCount.toString()}" class="task__delete-button control-button"></button></li>`
-  console.log('Создана задача');
   tasksCount++;
   completingTasks();
   deleteTask();
@@ -157,7 +156,6 @@ function updateTime() {
   } else if (background.classList.contains('long-break-tab-background')) {
     document.title = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} времени отдыха осталось`;
   }
-  console.log(tasksCount);
 }
 
 function resetTime() {

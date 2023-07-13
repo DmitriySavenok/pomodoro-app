@@ -172,9 +172,14 @@ body {
   transition: background-color 0.4s ease;
 }
 
+.task input{
+  cursor: pointer;
+}
+
 .task label {
   width: 220px;
   word-wrap: break-word;
+  cursor: pointer;
 }
 
 .task-done {
