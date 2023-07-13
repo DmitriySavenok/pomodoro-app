@@ -2,11 +2,14 @@ let background = document.querySelector('.tabs-background');
 let pomodoroCountSpan = document.querySelector('.current-count');
 
 let timer = document.getElementById('timer');
+
 let startBtn = document.getElementById('startBtn');
 let pauseBtn = document.getElementById('pauseBtn');
 let nextBtn = document.getElementById('nextBtn');
 let resetBtn = document.getElementById('resetBtn');
 let stopBtn = document.getElementById('stopBtn');
+
+let taskAddBtn = document.getElementById('taskAddBtn');
 
 let timerMinusBtn = document.getElementById('timerMinusBtn');
 let timerPlusBtn = document.getElementById('timerPlusBtn');
@@ -16,6 +19,13 @@ let setCyclesBtn = document.getElementById('setCyclesBtn');
 let pomodoroTabButton = document.getElementById('pomodoro');
 let shortTabButton = document.getElementById('short-break');
 let longTabButton = document.getElementById('long-break');
+
+let tasksCount = 1;
+clearInputs ();
+if (tasksCount > 1) {
+  completingTasks();
+  deleteTask()
+}
 
 let minutesDefault = 25;
 
@@ -37,6 +47,63 @@ let needRest = false;
 pauseBtn.disabled = true;
 resetBtn.disabled = true;
 nextBtn.disabled = true;
+
+taskAddBtn.addEventListener('click', () => {
+  let taskName = document.querySelector('#inputTaskName').value;
+  let taskCycle = document.querySelector('#inputTaskCycle').value;
+  if(taskName !== '') {
+    if(taskCycle >= 1 && taskCycle < necessaryCycles) {
+      craeteTask(taskName, taskCycle);
+    } else if (taskCycle == necessaryCycles){
+      craeteTask(taskName, taskCycle);
+    } else {
+      alert('Значение может быть от 1 до ' + necessaryCycles);
+    }
+  } else {
+    alert('Нужно указать название задачи');
+  }
+});
+
+function clearInputs () {
+  let taskName = document.querySelector('#inputTaskName').value ='';
+  let taskCycle = document.querySelector('#inputTaskCycle').value ='';
+}
+
+function craeteTask(name, cycle) {
+  document.getElementById('taskList').innerHTML += `<li class="tasks__list-item task" data-pomodoro-cycle="${cycle.toString()}" id="task-${tasksCount.toString()}"><input id="check-done-${tasksCount.toString()}" type="checkbox" class="task__checkbox-done"><label for="check-done-${tasksCount.toString()}">${name.toString()}</label><span class="task__cycle">${cycle.toString()} / ${necessaryCycles.toString()}</span><button id="deleteTask${tasksCount.toString()}" class="task__delete-button control-button"></button></li>`
+  console.log('Создана задача');
+  tasksCount++;
+  completingTasks();
+  deleteTask();
+  clearInputs ();
+}
+
+function completingTasks() {
+  document.querySelectorAll('.task__checkbox-done').forEach(el => {
+    el.addEventListener('click', (e) => {
+      checkboxId = e.target.id.toString();
+      taskDoneId = "#task-"+ checkboxId.at(-1);
+      elem = document.querySelector(taskDoneId).classList.toggle('task-done');
+    })
+  })
+}
+
+function deleteTask() {
+  document.querySelectorAll('.task__delete-button').forEach(el => {
+    el.addEventListener('click', (e) => {
+      delButtonId = e.target.id.toString();
+      delTaskId = "#task-"+ delButtonId.at(-1);
+      delTask = document.querySelector(delTaskId);
+      parentTasks = delTask.parentNode;
+      parentTasks.removeChild(delTask);
+      if (tasksCount > 1) {
+        tasksCount--;
+      } else if (tasksCount <= 1) {
+        tasksCount = 1;
+      }
+    })
+  })
+}
 
 function setDefaultMinutes() {
   pomodoroMinutes = 25;
@@ -90,6 +157,7 @@ function updateTime() {
   } else if (background.classList.contains('long-break-tab-background')) {
     document.title = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} времени отдыха осталось`;
   }
+  console.log(tasksCount);
 }
 
 function resetTime() {
@@ -231,6 +299,18 @@ timerPlusBtn.addEventListener('click', () => {
   }
 });
 
+function findCurrentTask(cycle) {
+  taskAttribute = `[data-pomodoro-cycle="${pomodoroCount}"]`;
+  taskList = [];
+  tasks = document.querySelectorAll(taskAttribute).forEach(el => {
+    elem = el.querySelector('label');
+    taskList.push(elem.textContent)
+  })
+  if (taskList.length > 0) {
+    alert("Необходимо выполнить следующие задачи: \n" + taskList)
+  }
+}
+
 startBtn.addEventListener('click', () => {
   if (background.classList.contains('pomodoro-background')) {
     minutesDefault = pomodoroMinutes;
@@ -242,6 +322,7 @@ startBtn.addEventListener('click', () => {
 
   if (background.classList.contains('pomodoro-background') && needRest == false) {
     startTime();
+    findCurrentTask(pomodoroCount);
   } else if (background.classList.contains('pomodoro-background') && needRest == true && pomodoroCount < necessaryCycles) {
     alert('Необходимо сделать перерыв');
   } else if (background.classList.contains('pomodoro-background') && needRest == true && pomodoroCount == necessaryCycles) {
@@ -341,7 +422,6 @@ function trackingButtonClicks() {
 }
 
 function pomodoroTabsActive() {
-  console.log("выбрана вкладка помодоро");
   seconds = 0;
   minutes = pomodoroMinutes;
   timer.textContent = `${minutes.toString()}:00`;
